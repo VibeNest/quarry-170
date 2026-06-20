@@ -1,149 +1,218 @@
-<div align="center">
-  <h1>🧠 Quarry</h1>
-  <p><strong>Knowledge Infrastructure Platform for Retrieval, Agents, and Production AI Systems</strong></p>
+# Quarry
 
-  <p>
-    <a href="https://fastapi.tiangolo.com/"><img src="https://img.shields.io/badge/FastAPI-005571?style=for-the-badge&logo=fastapi" alt="FastAPI" /></a>
-    <a href="https://www.postgresql.org/"><img src="https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white" alt="PostgreSQL" /></a>
-    <a href="https://python.org"><img src="https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python" /></a>
-    <img src="https://img.shields.io/badge/Security-JWT_Auth-success?style=for-the-badge" alt="Security" />
-  </p>
-</div>
+A production-first AI Systems Engineering platform built for scale, evaluation, and operational rigor.
 
 ---
 
-## 🎯 Why Quarry Exists
+## Vision
 
-Building reliable generative AI applications requires robust document ingestion, consistent chunking strategies, and low-latency semantic retrieval. Existing off-the-shelf vector database wrappers often couple infrastructure too tightly with orchestration logic. 
-
-Quarry decouples these concerns, providing a dedicated, API-first service exclusively for document intelligence and vector retrieval. This architectural separation guarantees that engineering teams retain complete control over their RAG (Retrieval-Augmented Generation) pipelines and multi-tenant data isolation.
+Quarry is a continuously evolving AI platform designed to demonstrate the complete lifecycle of production machine learning systems. Rather than building scattered, disconnected toy projects, Quarry aggregates progressive complexity into a single, cohesive architecture. This approach mirrors real-world enterprise environments where systems must scale, integrate, and evolve gracefully over time.
 
 ---
 
-## 🏗️ Design Principles
+## Why Quarry Exists
 
-- **API-First**: All system capabilities are exposed via strict, statically-typed REST endpoints.
-- **Stateless Orchestration**: The API layer remains stateless; all state is durably persisted, allowing horizontal scalability.
-- **Deterministic Processing**: Document chunking and embedding pipelines must yield predictable, testable outputs.
-- **Relational Integrity First**: Before introducing specialized vector indexes, relational mapping (User -> Document -> Chunk) is enforced via a standard RDBMS to ensure strict access control and data integrity.
+The AI engineering ecosystem is saturated with generic tutorial projects, single-file chat applications, and superficial one-off demonstrations. These projects often ignore the most critical aspects of real-world AI deployment: robustness, maintainability, evaluation, and observability.
 
----
-
-## 🚀 Current Capabilities
-
-Quarry v1 is a functional, single-node document retrieval engine. It provides the core end-to-end pipeline required to securely upload a document, extract its text, compute dense vector representations, and query the resulting index.
-
-* **🔒 Authentication**: Stateless, JWT-based bearer token authentication.
-* **📄 Document Ingestion**: Synchronous PDF parsing and text extraction.
-* **⚙️ Text Processing**: Deterministic sliding-window chunking logic.
-* **🧠 Vector Generation**: In-memory dense embedding computation using local transformer models.
-* **🔍 Semantic Search**: Similarity matching against processed chunks for contextual retrieval.
+Quarry exists to bridge the gap between prototype and production. It focuses strictly on the engineering rigor required to build, deploy, and maintain complex AI systems at scale, prioritizing architecture and operational maturity over quick demos.
 
 ---
 
-## 🔮 Future Vision
+## Engineering Principles
 
-Quarry will evolve from a synchronous, single-node API into a distributed, highly observable infrastructure component capable of supporting asynchronous ingestion pipelines, hybrid search workloads, and autonomous agents at enterprise scale.
-
-### Planned Stack Evolution
-- **Caching & Queues**: Introduction of Redis for rate limiting and asynchronous task queues (e.g., Celery) to handle massive document ingestion workloads.
-- **Vector Indexing**: Native `pgvector` integration, migrating from basic similarity search to optimized HNSW/IVFFlat indexes.
-- **Observability**: Implementation of OpenTelemetry for distributed tracing, Prometheus for metrics, and Grafana for dashboards.
-- **Deployment**: Containerization via Docker, orchestration via Kubernetes (Helm), and infrastructure as code via Terraform.
+* **API First**: All core functionalities are exposed as well-defined, versioned, and documented RESTful interfaces.
+* **Infrastructure First**: Data stores, compute layers, and deployment environments are treated as first-class citizens, ensuring scalable foundations.
+* **Evaluation First**: Systems are built with quantitative and qualitative measurement in mind, preventing regressions and validating improvements.
+* **Observability First**: Comprehensive logging, tracing, and monitoring are integrated from the start to ensure system transparency and rapid debugging.
+* **Production First**: Code quality, security, and performance are prioritized, treating every iteration as a deployment-ready release candidate.
 
 ---
 
-## 🏛️ System Architecture
+## Current Status
 
-```mermaid
-graph TD
-    Client[Client Application] -->|Auth Token| API[FastAPI Gateway]
-    Client -->|PDF Upload| API
-    Client -->|Search Query| API
-    
-    subgraph Core Services
-        API -->|Raw File| PDFParser[PDF Extraction Service]
-        PDFParser -->|Extracted Text| Chunker[Chunking Engine]
-        Chunker -->|Text Chunks| Embedder[Embedding Pipeline]
-        Embedder -->|Dense Vectors| Retrieval[Retrieval Service]
-    end
-    
-    subgraph Persistence Layer
-        API --> DB[(PostgreSQL)]
-        Embedder --> DB
-        Retrieval --> DB
-    end
+Current Version: Quarry v1
+
+Status: Active Development
+
+Implemented Features:
+* FastAPI
+* PostgreSQL
+* SQLAlchemy
+* JWT Authentication
+* Password Hashing
+* PDF Upload
+* PDF Parsing
+* Chunking Pipeline
+* Embeddings
+* Semantic Retrieval
+
+---
+
+## Architecture Overview
+
+```text
+Client
+│
+▼
+FastAPI
+│
+├── Authentication
+├── Document Processing
+├── Retrieval Layer
+│
+├── PostgreSQL
+├── Redis (planned)
+├── pgvector (planned)
+│
+└── Future AI Layer
 ```
 
 ---
 
-## ⚙️ Technology Stack
+## Tech Stack
 
-| Domain | Technologies | Purpose |
+| Technology | Purpose |
+| :--- | :--- |
+| FastAPI | High-performance API framework |
+| PostgreSQL | Primary relational database |
+| SQLAlchemy | Object Relational Mapper (ORM) |
+| JWT | Secure authentication mechanism |
+
+---
+
+## Current Capabilities
+
+* **Authentication**: Secure user registration and login using JSON Web Tokens (JWT) and robust password hashing.
+* **Document Processing**: Ingestion pipelines for uploading and parsing PDF documents.
+* **Chunking**: Strategy-based text segmentation to prepare document content for optimal vectorization.
+* **Embeddings**: Transformation of textual chunks into high-dimensional vector representations.
+* **Retrieval**: Semantic search capabilities to retrieve relevant context based on user queries.
+
+---
+
+## Quarry Evolution Roadmap
+
+| Version | Focus | Status |
 | :--- | :--- | :--- |
-| **API & Routing** | FastAPI, Pydantic | High-performance async routing and strict data validation |
-| **Data & Persistence** | PostgreSQL, SQLAlchemy | Relational datastore and Object-Relational Mapping |
-| **Security** | python-jose, passlib | JWT cryptographic verification and password hashing |
-| **Document Intelligence**| PyMuPDF, sentence-transformers | PDF parsing, text extraction, and dense vector generation |
+| v1 | Foundation | Completed |
+| v2 | Production Backend | Planned |
+| v3 | LLM Layer | Planned |
+| v4 | Production RAG | Planned |
+| v5 | Agent Infrastructure | Planned |
+| v6 | Evaluation Platform | Planned |
+| v7 | Learning Infrastructure | Planned |
+| v8 | Research Infrastructure | Planned |
+| v9 | Repository Intelligence | Planned |
+| v10 | Advanced Retrieval | Planned |
+| v11 | Memory Systems | Planned |
+| v12 | Security & Guardrails | Planned |
+| v13 | Cloud Operations | Planned |
+| v14 | Observability | Planned |
+| v15 | Inference Platform | Planned |
 
 ---
 
-## 🗺️ Quarry Evolution
+## Repository Structure
 
-### Quarry v1 — Foundation
-✅ JWT Authentication  
-✅ PostgreSQL  
-✅ PDF Upload  
-✅ Embedding Generation  
-✅ Semantic Retrieval  
-
-### Quarry v2 — Performance
-⬜ Redis  
-⬜ pgvector  
-⬜ Docker  
-⬜ Testing  
-
-### Quarry v3 — Intelligence
-⬜ LLM Integration  
-⬜ Streaming  
-⬜ Cost Tracking  
-
-### Quarry v4 — Production RAG
-⬜ Hybrid Search  
-⬜ Reranking  
-⬜ Evaluation  
+```text
+quarry/
+├── app/                  # Application code
+│   ├── api/              # API endpoints
+│   ├── db/               # Database setup and connections
+│   ├── models/           # SQLAlchemy models
+│   ├── schemas/          # Pydantic schemas
+│   ├── utils/            # Utilities and core logic
+│   └── main.py           # FastAPI application entry point
+├── uploads/              # Uploaded PDF storage
+├── create_tables.py      # Database initialization script
+├── requirements.txt      # Project dependencies
+└── README.md             # Project documentation
+```
 
 ---
 
-## 🛠️ Local Development Setup
+## Local Development
 
-**1. Environment Setup**
-```bash
-git clone https://github.com/x2ankit/quarry.git
-cd quarry
-python -m venv venv
-source venv/bin/activate  # Windows: `venv\Scripts\activate`
-pip install -r requirements.txt
-```
+### Prerequisites
+* Python 3.10+
+* PostgreSQL running locally or via Docker
 
-**2. Configuration**
-Define your environment variables in a root `.env` file:
-```env
-DATABASE_URL=postgresql://user:password@localhost:5432/quarry
-SECRET_KEY=your_cryptographic_secret_key
-ALGORITHM=HS256
-ACCESS_TOKEN_EXPIRE_MINUTES=30
-```
+### Installation
 
-**3. Database Initialization**
-Generate the relational schemas against your local PostgreSQL instance:
-```bash
-python create_tables.py
-```
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/x2ankit/quarry.git
+   cd quarry
+   ```
 
-**4. Server Execution**
-Launch the ASGI server:
+2. Create and activate a virtual environment:
+   ```bash
+   python -m venv venv
+   source venv/bin/activate  # On Windows: venv\Scripts\activate
+   ```
+
+3. Install dependencies:
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+4. Configure environment variables (create a `.env` file):
+   ```env
+   DATABASE_URL=postgresql://user:password@localhost:5432/quarry
+   SECRET_KEY=your_secret_key_here
+   ```
+
+5. Initialize the database:
+   ```bash
+   python create_tables.py
+   ```
+
+### Run the Server
+
+Start the FastAPI application:
 ```bash
 uvicorn app.main:app --reload
 ```
-*API Documentation and OpenAPI spec available at `http://localhost:8000/docs`.*
+
+The Swagger API documentation will be available at: `http://localhost:8000/docs`
+
+---
+
+## Future Directions
+
+Quarry is architected to incrementally integrate advanced AI patterns:
+* **RAG**: Implementing advanced Retrieval-Augmented Generation patterns for precise querying.
+* **Agents**: Orchestrating autonomous agents to handle complex, multi-step tasks.
+* **Memory**: Building stateful systems that retain context across extended user interactions.
+* **Evaluation**: Creating robust pipelines to assess and score model performance continuously.
+* **Observability**: Integrating full-stack tracing and telemetry for AI specific workloads.
+* **Inference**: Optimizing deployment infrastructure for high-throughput, low-latency model inference.
+
+---
+
+## Why This Project Matters
+
+Quarry demonstrates a comprehensive understanding of:
+* **Backend Engineering**: Designing scalable and robust APIs.
+* **AI Systems Engineering**: Integrating AI components into traditional backend architectures.
+* **Retrieval Systems**: Building efficient vector search and chunking mechanisms.
+* **Agent Systems**: Designing orchestration layers for autonomous behavior.
+* **Evaluation Systems**: Implementing metrics to quantify AI system performance.
+* **Deployment Engineering**: Preparing applications for production environments.
+* **Inference Engineering**: Optimizing the serving of machine learning models.
+
+---
+
+## Roadmap Alignment
+
+Quarry serves as the foundational artifact developed alongside a multi-phase AI Engineering roadmap, tracking the progression from foundational concepts to advanced inference engineering.
+
+---
+
+## Author
+
+Ankit Arayan Tripathy
+
+AI Engineer → AI Systems Engineer → Inference Engineer → LLM Engineer
+
+GitHub: https://github.com/x2ankit
