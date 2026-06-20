@@ -1,165 +1,162 @@
-<div align="center">
-  <h1>🧠 Quarry</h1>
-  <p><strong>Premium AI Knowledge Infrastructure & Document Intelligence Platform</strong></p>
+# Quarry
 
-  <p>
-    <a href="https://fastapi.tiangolo.com/"><img src="https://img.shields.io/badge/FastAPI-005571?style=for-the-badge&logo=fastapi" alt="FastAPI" /></a>
-    <a href="https://www.postgresql.org/"><img src="https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white" alt="PostgreSQL" /></a>
-    <a href="https://python.org"><img src="https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python" /></a>
-    <img src="https://img.shields.io/badge/Security-JWT_Auth-success?style=for-the-badge" alt="Security" />
-  </p>
-</div>
+Quarry is an AI Knowledge Infrastructure Platform providing the foundational data layer for document ingestion, dense vector embedding, and semantic search.
 
 ---
 
-## 🌟 Overview
+## 1. Why Quarry Exists
 
-**Quarry** is a production-grade AI Knowledge Infrastructure Platform engineered to process, store, and semantically retrieve document data at scale. 
+Building reliable generative AI applications requires robust document ingestion, consistent chunking strategies, and low-latency semantic retrieval. Existing off-the-shelf vector database wrappers often couple infrastructure too tightly with orchestration logic. Quarry decouples these concerns, providing a dedicated, API-first service exclusively for document intelligence and vector retrieval. This architectural separation guarantees that engineering teams retain complete control over their RAG (Retrieval-Augmented Generation) pipelines and multi-tenant data isolation.
 
-It solves the foundational challenge of building scalable **Agentic workflows** by providing a robust, high-performance pipeline for document ingestion, dense vector embedding, and semantic search. Our vision is to evolve Quarry into a comprehensive ecosystem natively supporting hybrid search, advanced AI agents, and deep observability.
+## 2. Design Principles
 
----
-
-## ⚡️ Key Features
-
-* **🔒 Enterprise Security**: Secure user authentication and authorization pipelines powered by JSON Web Tokens (JWT).
-* **📄 Scalable Ingestion**: High-throughput PDF and document upload architecture.
-* **⚙️ Intelligent Processing**: Automated text extraction combined with smart chunking strategies.
-* **🧠 Vector Embeddings**: State-of-the-art dense vector representations using advanced transformer models.
-* **🔍 Semantic Retrieval**: High-performance semantic search engine to surface the most contextually relevant data.
+- **API-First**: All system capabilities are exposed via strict, statically-typed REST endpoints.
+- **Stateless Orchestration**: The API layer remains stateless; all state is durably persisted, allowing horizontal scalability.
+- **Deterministic Processing**: Document chunking and embedding pipelines must yield predictable, testable outputs.
+- **Relational Integrity First**: Before introducing specialized vector indexes, relational mapping (User -> Document -> Chunk) is enforced via a standard RDBMS to ensure strict access control and data integrity.
 
 ---
 
-## 🏗️ Architecture
+## 3. Current State
 
-Quarry is architected upon strict **Domain-Driven Design** principles to ensure absolute maintainability and clean separation of concerns:
+Quarry v1 is a functional, single-node document retrieval engine. It provides the core end-to-end pipeline required to securely upload a document, extract its text, compute dense vector representations, and query the resulting index.
 
-* **🌐 API Layer**: Lightning-fast endpoints built on `FastAPI` for routing, strict validation, and seamless serialization.
-* **🛠️ Service Utilities**: Modular and decoupled pipelines for PDF parsing, text chunking, and vector embedding.
-* **🗃️ Data Access**: `SQLAlchemy` ORM powering reliable relational mapping and efficient database sessions.
-* **💾 Persistence**: `PostgreSQL` engine managing complex, robust relationships between Users, Documents, and Embedded Chunks.
-
----
-
-## 🧰 Tech Stack
-
-| Technology | Purpose |
-| :--- | :--- |
-| **FastAPI** | High-performance async web framework |
-| **PostgreSQL** | Primary relational database |
-| **SQLAlchemy** | Object-Relational Mapping (ORM) |
-| **JWT** | Secure token-based authentication |
-| **Pydantic** | Strict data validation & serialization |
-| **PyMuPDF** | Advanced PDF parsing & extraction |
-| **Sentence Transformers**| Dense vector embedding generation |
+**Supported Capabilities:**
+- **Authentication**: Stateless, JWT-based bearer token authentication.
+- **Document Ingestion**: Synchronous PDF parsing and text extraction.
+- **Text Processing**: Deterministic sliding-window chunking logic.
+- **Vector Generation**: In-memory dense embedding computation using local transformer models.
+- **Semantic Search**: Similarity matching against processed chunks for contextual retrieval.
 
 ---
 
-## 📂 Project Structure
+## 4. Future Vision
 
-```text
-app/
-├── api/          # Route handlers & API endpoints
-├── db/           # Database engine & session dependencies
-├── models/       # SQLAlchemy ORM schemas
-├── schemas/      # Pydantic data validation models
-├── utils/        # Core AI, chunking, and security logic
-└── main.py       # Application entrypoint
+Quarry will evolve from a synchronous, single-node API into a distributed, highly observable infrastructure component capable of supporting asynchronous ingestion pipelines, hybrid search workloads, and autonomous agents at enterprise scale.
+
+### Planned Stack Evolution
+- **Caching & Queues**: Introduction of Redis for rate limiting and asynchronous task queues (e.g., Celery) to handle massive document ingestion workloads.
+- **Vector Indexing**: Native `pgvector` integration, migrating from basic similarity search to optimized HNSW/IVFFlat indexes.
+- **Observability**: Implementation of OpenTelemetry for distributed tracing, Prometheus for metrics, and Grafana for dashboards.
+- **Deployment**: Containerization via Docker, orchestration via Kubernetes (Helm), and infrastructure as code via Terraform.
+
+---
+
+## 5. System Architecture Flow
+
+```mermaid
+graph TD
+    Client[Client Application] -->|Auth Token| API[FastAPI Gateway]
+    Client -->|PDF Upload| API
+    Client -->|Search Query| API
+    
+    subgraph Core Services
+        API -->|Raw File| PDFParser[PDF Extraction Service]
+        PDFParser -->|Extracted Text| Chunker[Chunking Engine]
+        Chunker -->|Text Chunks| Embedder[Embedding Pipeline]
+        Embedder -->|Dense Vectors| Retrieval[Retrieval Service]
+    end
+    
+    subgraph Persistence Layer
+        API --> DB[(PostgreSQL)]
+        Embedder --> DB
+        Retrieval --> DB
+    end
 ```
 
 ---
 
-## 🚀 Quick Start
+## 6. Current Technology Stack
 
-> [!IMPORTANT]
-> Ensure you have Python 3.9+ and PostgreSQL installed locally before proceeding.
+**API & Routing**
+- **FastAPI**: High-performance ASGI web framework.
+- **Pydantic**: Strict data validation and schema serialization.
 
-**1. Clone & Navigate**
+**Data & Persistence**
+- **PostgreSQL**: Primary relational datastore.
+- **SQLAlchemy**: Object-Relational Mapper.
+- **psycopg2**: PostgreSQL database adapter.
+
+**Security**
+- **python-jose**: JWT signing and cryptographic verification.
+- **passlib**: Password hashing (bcrypt).
+
+**Document Intelligence**
+- **PyMuPDF**: Robust PDF parsing and text extraction.
+- **sentence-transformers**: HuggingFace model integration for generating dense vector embeddings.
+
+---
+
+## 7. Architecture Decisions
+
+- **Why FastAPI?** 
+  Chosen for its native asynchronous support, auto-generated OpenAPI schemas, and seamless Pydantic integration, which drastically reduces input validation boilerplate and prevents malformed data from reaching the service layer.
+- **Why PostgreSQL?** 
+  We prioritize strict relational integrity for multi-tenant isolation. Vector support will be layered on top of this stable foundation via `pgvector` rather than adopting a disconnected, specialized vector database, reducing operational complexity.
+- **Why JWT?** 
+  Stateless, cryptographically verifiable tokens allow the API layer to scale horizontally without requiring a distributed session store for v1.
+- **Why Embeddings (Sentence-Transformers)?** 
+  Dense vector retrieval significantly outperforms traditional BM25/keyword search for semantic intent matching, which is non-negotiable for RAG pipelines. Local `sentence-transformers` execution enables deterministic testing without immediate dependency on external API providers.
+
+---
+
+## 8. Roadmap by Quarry Versions
+
+### v1.x: Core Foundation (Current)
+- JWT Authentication & RBAC groundwork.
+- Synchronous Document Upload & PDF Parsing.
+- Local Embedding Generation & Basic Retrieval.
+
+### v2.x: Scale & Performance
+- Asynchronous task queues for document processing (Redis).
+- Native vector search indexing using `pgvector`.
+- Streaming responses for chat retrieval endpoints.
+
+### v3.x: Advanced Retrieval
+- Hybrid Search (Dense Vectors + Sparse/BM25).
+- Neural Reranking integration (e.g., Cohere or Cross-Encoders).
+- Provider integrations (OpenAI, Anthropic, Gemini).
+
+### v4.x: Enterprise Operations
+- Deep observability (OpenTelemetry distributed tracing).
+- Agentic workflow support (tool use and routing integration).
+- High availability deployment manifests (Docker, Kubernetes).
+
+---
+
+## 9. Local Development Setup
+
+**1. Environment Setup**
+Clone the repository and initialize your virtual environment:
 ```bash
 git clone https://github.com/x2ankit/quarry.git
 cd quarry
-```
-
-**2. Virtual Environment Setup**
-```bash
 python -m venv venv
-source venv/bin/activate  # On Windows: `venv\Scripts\activate`
-```
-
-**3. Install Dependencies**
-```bash
+source venv/bin/activate  # Windows: `venv\Scripts\activate`
 pip install -r requirements.txt
 ```
 
-**4. Database Initialization**
-```bash
-# Ensure your local PostgreSQL instance is running
-python create_tables.py
-```
-
-**5. Launch the Engine**
-```bash
-uvicorn app.main:app --reload
-```
-*API Documentation will be instantly available at `http://localhost:8000/docs`.*
-
----
-
-## 🔐 Environment Variables
-
-Create a `.env` file at the root of your project:
-
+**2. Configuration**
+Define your environment variables in a root `.env` file:
 ```env
-# Database Configuration
 DATABASE_URL=postgresql://user:password@localhost:5432/quarry
-
-# Security Keys
 SECRET_KEY=your_cryptographic_secret_key
 ALGORITHM=HS256
 ACCESS_TOKEN_EXPIRE_MINUTES=30
 ```
 
----
+**3. Database Initialization**
+Generate the relational schemas against your local PostgreSQL instance:
+```bash
+python create_tables.py
+```
 
-## 🗺️ API Overview
-
-| Endpoint | Description |
-| :--- | :--- |
-| `POST /api/auth/*` | Registration, login, and JWT generation |
-| `POST /api/upload` | Secure ingestion of PDF documents |
-| `GET /api/documents` | Management and inspection of processed data |
-| `POST /api/chat` | Semantic search and contextual retrieval queries |
-| `GET /health` | System readiness and health probes |
-
----
-
-## 🔮 Roadmap
-
-### Quarry v2 — Knowledge Retrieval Foundation
-
-**✅ Completed**
-- [x] Authentication Pipeline
-- [x] Document Upload Service
-- [x] Embedding Generation
-- [x] Semantic Retrieval
-
-**🚀 Upcoming**
-- [ ] Redis Caching Layer
-- [ ] Native `pgvector` Integration
-- [ ] Hybrid Search Capabilities
-- [ ] Neural Reranking
-- [ ] Evaluation Frameworks
-- [ ] Agentic Workflows
-- [ ] Deep Observability
+**4. Server Execution**
+Launch the ASGI server:
+```bash
+uvicorn app.main:app --reload
+```
+API Documentation and OpenAPI spec available at `http://localhost:8000/docs`.
 
 ---
-
-## 📊 Development Status
-
-Quarry is currently in **active development**, accelerating towards the highly anticipated v2 milestone. The foundational infrastructure for processing and retrieval is battle-tested, while advanced caching, hyper-scale search capabilities, and production deployment mechanisms are actively being engineered.
-
----
-
-<div align="center">
-  <i>Engineered for scale. Built for the future of AI.</i>
-</div>
+*License: No license specified*
