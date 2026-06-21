@@ -1,10 +1,8 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
-from sqlalchemy import select
 
 from app.db.dependencies import get_db, get_current_user
 from app.models.user import User
-from app.models.chunk import Chunk
 
 from app.schemas.chat import QuestionRequest
 from app.utils.retrieval import retrieve_chunks
@@ -18,14 +16,10 @@ def ask_question(
     db: Session = Depends(get_db)
 ):
 
-    chunks = db.execute(
-        select(Chunk)
-    ).scalars().all()
-
     relevant_chunks = retrieve_chunks(
-        request.question,
-        chunks
-    )
+    request.question,
+    db
+)
 
     return {
         "question": request.question,

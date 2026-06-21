@@ -7,7 +7,7 @@ def get_model():
 
     if _model is None:
         _model = SentenceTransformer(
-            "all-MiniLM-L6-v2"
+            "all-MiniLM-L6-v2"    #produces 384 Dimensional Embeddings
         )
 
     return _model

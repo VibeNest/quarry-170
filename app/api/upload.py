@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, UploadFile, File, HTTPException
 from sqlalchemy.orm import Session
 import os
-import json
+
 
 from app.db.dependencies import get_db, get_current_user
 
@@ -102,9 +102,7 @@ async def upload_file(
             Chunk(
                 document_id=new_document.id,
                 content=chunk,
-                embedding=json.dumps(
-                    embedding
-                )
+                embedding = embedding
             )
         )
 
