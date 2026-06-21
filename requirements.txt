@@ -8,7 +8,8 @@ python-jose[cryptography]
 passlib[bcrypt]
 python-multipart
 PyMuPDF
-sentence-transformers
 redis
 email-validator
 pgvector
+python-dotenv
+sentence-transformers
