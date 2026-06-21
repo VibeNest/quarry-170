@@ -1,57 +1,30 @@
-import json
-import numpy as np
+from sqlalchemy import select
+from sqlalchemy.orm import Session
 
 from app.models.chunk import Chunk
 from app.utils.embedding import generate_embedding
 
 
-def cosine_similarity(
-    a,
-    b
-):
-    a = np.array(a)
-    b = np.array(b)
-
-    return np.dot(a, b) / (
-        np.linalg.norm(a)
-        * np.linalg.norm(b)
-    )
-
-
 def retrieve_chunks(
     question: str,
-    chunks
+    db: Session,
+    top_k: int = 5
 ):
     question_embedding = generate_embedding(
         question
     )
 
-    scores = []
-
-    for chunk in chunks:
-
-        chunk_embedding = json.loads(
-            chunk.embedding
-        )
-
-        score = cosine_similarity(
-            question_embedding,
-            chunk_embedding
-        )
-
-        scores.append(
-            (
-                score,
-                chunk
+    chunks = db.execute(
+        select(Chunk)
+        .order_by(
+            Chunk.embedding.cosine_distance(
+                question_embedding
             )
         )
-
-    scores.sort(
-        reverse=True,
-        key=lambda x: x[0]
-    )
+        .limit(top_k)
+    ).scalars().all()
 
     return [
         chunk.content
-        for score, chunk in scores[:5]
+        for chunk in chunks
     ]

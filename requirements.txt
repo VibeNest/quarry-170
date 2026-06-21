@@ -11,3 +11,4 @@ PyMuPDF
 sentence-transformers
 redis
 email-validator
+pgvector
