@@ -1,8 +1,9 @@
-from sentence_transformers import SentenceTransformer
 
 _model = None
 
 def get_model():
+    from sentence_transformers import SentenceTransformer
+
     global _model
 
     if _model is None:

@@ -1,4 +1,20 @@
 services:
+
+  api:
+    build: .
+
+    container_name: quarry-api
+
+    ports:
+      - "8000:8000"
+
+    env_file:
+      - .env
+
+    depends_on:
+      - postgres
+      - redis
+
   postgres:
     image: pgvector/pgvector:pg17
 
@@ -14,6 +30,14 @@ services:
 
     volumes:
       - postgres_data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7
+
+    container_name: quarry-redis
+
+    ports:
+      - "6379:6379"
 
 volumes:
   postgres_data:
